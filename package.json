@@ -1,0 +1,19 @@
+{
+  "name": "zepar",
+  "version": "1.0.0",
+  "description": "A js parser",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/jackie-gan/zepar.git"
+  },
+  "author": "jackie-gan",
+  "license": "MIT",
+  "bugs": {
+    "url": "https://github.com/jackie-gan/zepar/issues"
+  },
+  "homepage": "https://github.com/jackie-gan/zepar#readme"
+}
