@@ -1,19 +1,30 @@
 {
-  "name": "zepar",
+  "name": "tiny-js-interpreter",
   "version": "1.0.0",
-  "description": "A js parser",
+  "description": "A js interpreter",
   "main": "index.js",
+  "typings": "types/index.d.ts",
   "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1"
+    "dev": "",
+    "test": "jest"
   },
   "repository": {
     "type": "git",
-    "url": "git+https://github.com/jackie-gan/zepar.git"
+    "url": "git+https://github.com/jackie-gan/tiny-js-interpreter.git"
   },
   "author": "jackie-gan",
   "license": "MIT",
   "bugs": {
-    "url": "https://github.com/jackie-gan/zepar/issues"
+    "url": "https://github.com/jackie-gan/tiny-js-interpreter/issues"
   },
-  "homepage": "https://github.com/jackie-gan/zepar#readme"
+  "homepage": "https://github.com/jackie-gan/tiny-js-interpreter#readme",
+  "devDependencies": {
+    "@babel/preset-env": "^7.10.3",
+    "@types/estree": "0.0.45",
+    "@types/jest": "^26.0.3",
+    "babel-jest": "^26.1.0",
+    "jest": "^26.1.0",
+    "ts-jest": "^26.1.1",
+    "typescript": "^3.9.5"
+  }
 }
