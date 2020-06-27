@@ -19,7 +19,7 @@ export class Scope {
   public var(name: string, value: any) {
     this.content[name] = value;
 
-    if () {
+    if (this.type) {
 
     }
   }
