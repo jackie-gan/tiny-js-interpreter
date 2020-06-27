@@ -29,6 +29,9 @@ const vistorsMap = {
   Literal: (node: ESTree.Literal, scope) => {
     return node.value;
   },
+  Identifier: (node: ESTree.Identifier, scope) => {
+    
+  },
   CallExpression: (node: ESTree.CallExpression, scope) => {
 
   }
