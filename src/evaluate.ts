@@ -212,6 +212,9 @@ const vistorsMap = {
 
     if (testResult) return evaluate(consequent, scope);
     else return alternate ? evaluate(alternate, scope) : undefined;
+  },
+  FunctionDeclaration: (node: ESTree.FunctionDeclaration, scope: Scope) => {
+    
   }
 };
 

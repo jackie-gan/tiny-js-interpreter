@@ -15,10 +15,10 @@ export class Scope {
   private content: { [key: string]: Var };
   public invasive: boolean;
 
-  constructor(public readonly type: ScopeType, parent?: Scope) {
+  constructor(public readonly type: ScopeType, parent?: Scope, invasive?: boolean) {
     this.parent = parent || null;
     this.content = {};
-    this.invasive = false;
+    this.invasive = invasive;
   }
 
   public var(rawName: string, value: any): boolean {

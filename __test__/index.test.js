@@ -36,7 +36,7 @@ describe('tiny js interpreter', () => {
       }
       console.log(result);
     `);
-  })
+  });
 
   test('test for update expression', () => {
     execute(`
@@ -47,5 +47,16 @@ describe('tiny js interpreter', () => {
       console.log('--', --m);
       console.log('--', n--);
     `);
-  })
+  });
+
+  test('test for function 1', () => {
+    execute(`
+      var checkVal = 11;
+      function func() {
+        var checkVal = 22;
+        console.log(checkVal);
+      }
+      func();
+    `);
+  });
 });
