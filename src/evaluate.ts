@@ -1,6 +1,7 @@
 import * as ESTree from 'estree';
 import { TAG } from './utils';
 import { Scope } from './scope';
+import { Signal } from './signal';
 import { Var } from './var';
 
 const vistorsMap = {
@@ -12,6 +13,20 @@ const vistorsMap = {
   ExpressionStatement: (node: ESTree.ExpressionStatement, scope: Scope) => {
     evaluate(node.expression, scope);
   },
+  BlockStatement: (node: ESTree.BlockStatement, scope: Scope) => {
+    const blockScope = scope.invasive ? scope : new Scope('block', scope);
+
+    const { body } = node;
+    const len = body.length;
+
+    for (let i = 0; i < len; i++ ) {
+      const result = evaluate(body[i], blockScope);
+
+      if (Signal.isBreak(result) || Signal.isContinue(result) || Signal.isReturn(result)) {
+        return result;
+      }
+    }
+  },
   BinaryExpression: (node: ESTree.BinaryExpression, scope: Scope) => {
     const leftVal = evaluate(node.left, scope);
     const rightVal = evaluate(node.right, scope);
@@ -22,7 +37,15 @@ const vistorsMap = {
       '-': (l, r) => l - r,
       '*': (l, r) => l * r,
       '/': (l, r) => l / r,
-      '%': (l, r) => l % r
+      '%': (l, r) => l % r,
+      '<': (l, r) => l < r,
+      '>': (l, r) => l > r,
+      '<=': (l, r) => l <= r,
+      '>=': (l, r) => l >= r,
+      '==': (l, r) => l == r,
+      '===': (l, r) => l === r,
+      '!=': (l, r) => l != r,
+      '!==': (l, r) => l !== r
     };
 
     if (calculateFunc[operator]) return calculateFunc[operator](leftVal, rightVal);
@@ -82,7 +105,7 @@ const vistorsMap = {
   AssignmentExpression: (node: ESTree.AssignmentExpression, scope: Scope) => {
     const { left, operator, right } = node;
     // 待赋值的变量
-    // TODO 使用Var，考虑const的情况，目前这里先不考虑
+    // TODO 目前使用var，后续需要考虑const的情况，目前这里先不考虑
     let assignVar: { setVal(v: any): boolean, getVal(): any };
     // 分开两种情况:
     // 1、对标识符Identifier赋值
@@ -95,15 +118,15 @@ const vistorsMap = {
     } else if (left.type === 'MemberExpression') {
       const { object, property, computed } = left;
       const obj = evaluate(object, scope);
-      const prop = computed ? evaluate(property, scope) : (<ESTree.Identifier>property).name;
+      const key = computed ? evaluate(property, scope) : (<ESTree.Identifier>property).name;
 
       assignVar = {
         setVal(v) {
-          obj[prop] = v;
+          obj[key] = v;
           return true
         },
         getVal() {
-          return obj[prop];
+          return obj[key];
         }
       }
     } else throw `${TAG} unknow assginment expression`;
@@ -117,6 +140,78 @@ const vistorsMap = {
       '/=': (v) => (assignVar.setVal(assignVar.getVal() / v), assignVar.getVal()),
       '%=': (v) => (assignVar.setVal(assignVar.getVal() % v), assignVar.getVal())
     })[operator](evaluate(right, scope));
+  },
+  ForStatement: (node: ESTree.ForStatement, scope: Scope) => {
+    const { init, test, update, body } = node;
+    const loopScope = new Scope('loop', scope);
+
+    for (
+      init ? evaluate(init, loopScope) : undefined;
+      test ? evaluate(test, loopScope) : true;
+      update ? evaluate(update, loopScope) : undefined) {
+      const result = evaluate(body, loopScope);
+      if (Signal.isBreak(result)) break;
+      else if (Signal.isContinue(result)) continue;
+      else if (Signal.isReturn(result)) return result.result;
+    }
+  },
+  UpdateExpression: (node: ESTree.UpdateExpression, scope: Scope) => {
+    const { operator, argument, prefix } = node;
+
+    // 待改变的变量
+    // TODO 目前只考虑var，后续需要考虑const的情况
+    let updateVar: { getVal(): any, setVal(v: string): boolean };
+
+    if (argument.type === 'Identifier') {
+      const rawName = argument.name;
+      const variable = scope.search(rawName);
+      if (!variable) throw `${TAG} ${rawName} is not defined`;
+      else updateVar = variable;
+    } else if (argument.type === 'MemberExpression') {
+      const { object, property, computed } = (<ESTree.MemberExpression>argument);
+      const obj = evaluate(object, scope);
+      const key = computed ? evaluate(property, scope) : (<ESTree.Identifier>property).name;
+
+      updateVar = {
+        getVal() {
+          return obj[key];
+        },
+        setVal(v) {
+          obj[key] = v;
+          return true;
+        }
+      };
+    } else throw `${TAG} unknow update expression`;
+
+    return ({
+      '++': (v) => {
+        const source = v.getVal();
+        v.setVal(source + 1);
+        return prefix ? v.getVal() : source; 
+      },
+      '--': (v) => {
+        const source = v.getVal();
+        v.setVal(source - 1);
+        return prefix ? v.getVal() : source;
+      }
+    })[operator](updateVar);
+  },
+  BreakStatement: () => {
+    return new Signal('break');
+  },
+  ContinueStatement: () => {
+    return new Signal('continue');
+  },
+  ReturnStatement: (node: ESTree.ReturnStatement, scope: Scope) => {
+    return new Signal('return', node.argument ? evaluate(node.argument, scope) : undefined);
+  },
+  IfStatement: (node: ESTree.IfStatement, scope: Scope) => {
+    const { test, consequent, alternate } = node;
+
+    const testResult = evaluate(test, scope);
+
+    if (testResult) return evaluate(consequent, scope);
+    else return alternate ? evaluate(alternate, scope) : undefined;
   }
 };
 
