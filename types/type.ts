@@ -1,5 +1,3 @@
-export type ScopeType = 'function' | 'block' | 'loop' | 'switch';
+export type ScopeType = 'root' | 'function' | 'block' | 'loop' | 'switch';
 
-export interface VariableObject {
-
-}
+export type KindType = "var" | "const" | "let";
