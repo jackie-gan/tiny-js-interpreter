@@ -34,6 +34,37 @@ describe('tiny js interpreter', () => {
     `);
   });
 
+  test('test for while', () => {
+    execute(`
+      var i = 0;
+      while(i < 11) {
+        i++;
+      }
+      console.log('test for while', i);
+    `);
+  });
+
+  test('test for do while', () => {
+    execute(`
+      var i = 0;
+      do {
+        i++;
+      } while(i < 11)
+      console.log('test for do while', i);
+    `);
+  });
+
+  test('test for for in', () => {
+    execute(`
+      var obj = { a: '1', b: '2' };
+      var result = '';
+      for (var key in obj) {
+        result += key;
+      }
+      console.log(result);
+    `);
+  });
+
   test('test for update expression', () => {
     execute(`
       var i = 1, j = 1;

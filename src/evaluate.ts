@@ -27,6 +27,13 @@ const vistorsMap = {
       }
     }
   },
+  ObjectExpression: (node: ESTree.ObjectExpression, scope: Scope) => {
+    const result = {};
+
+    for (const property of node.properties) {
+      const kind = property.kind;
+    }
+  },
   BinaryExpression: (node: ESTree.BinaryExpression, scope: Scope) => {
     const leftVal = evaluate(node.left, scope);
     const rightVal = evaluate(node.right, scope);
@@ -153,6 +160,44 @@ const vistorsMap = {
       if (Signal.isBreak(result)) break;
       else if (Signal.isContinue(result)) continue;
       else if (Signal.isReturn(result)) return result.result;
+    }
+  },
+  WhileStatement: (node: ESTree.WhileStatement, scope: Scope) => {
+    const { test, body } = node;
+
+    while (evaluate(test, scope)) {
+      const result = evaluate(body, scope);
+
+      if (Signal.isBreak(result)) break;
+      if (Signal.isContinue(result)) continue;
+      if (Signal.isReturn(result)) return result.result;
+    }
+  },
+  DoWhileStatement: (node: ESTree.DoWhileStatement, scope: Scope) => {
+    const { test, body } = node;
+    
+    do {
+      const result = evaluate(body, scope);
+
+      if (Signal.isBreak(result)) break;
+      if (Signal.isContinue(result)) continue;
+      if (Signal.isReturn(result)) return result.result;
+    } while (evaluate(test, scope));
+  },
+  ForInStatement: (node: ESTree.ForInStatement, scope: Scope) => {
+    const { left, right, body } = node;
+
+    const declar = (<ESTree.VariableDeclaration>left).declarations[0];
+    const kind = (<ESTree.VariableDeclaration>left).kind;
+    const name = (<ESTree.Identifier>declar.id).name;
+
+    for (const value in evaluate(right, scope)) {
+      scope.declare(kind, name, value);
+
+      const result = evaluate(body, scope);
+      if (Signal.isBreak(result)) break;
+      if (Signal.isContinue(result)) continue;
+      if (Signal.isReturn(result)) return result.result;      
     }
   },
   UpdateExpression: (node: ESTree.UpdateExpression, scope: Scope) => {
