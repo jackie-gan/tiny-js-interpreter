@@ -1,5 +1,5 @@
 export const TAG = '[Tiny JS Interpreter]';
 
-export const defaultApi = {
+export const defaultApis = {
   console
 };

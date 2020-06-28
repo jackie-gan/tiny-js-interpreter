@@ -1,12 +1,12 @@
 import { KindType } from '../types/type';
 import { TAG } from './utils';
 
-interface VarInterface {
+interface IVar {
   getVal(): any
   setVal(value: any): boolean
 }
 
-export class Var implements VarInterface {
+export class Var implements IVar {
   constructor(public kind: KindType, private value: any) {}
 
   public getVal(): any {

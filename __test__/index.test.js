@@ -9,7 +9,11 @@ describe('tiny js interpreter', () => {
     execute('console.log("test")');
   })
 
-  test('test const', () => {
-
+  test('test assign', () => {
+    execute(`
+      var i = 1;
+      i = 2;
+      console.log(i);
+    `);
   })
 });

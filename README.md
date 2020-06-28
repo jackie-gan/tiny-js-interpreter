@@ -15,3 +15,6 @@ A js interpreter
 
 `ES访问器`按照[ESTree规范](https://github.com/estree/estree)编写
 
+## Related
+
+感谢[jsjs](https://github.com/bramblex/jsjs)，受它的启发较多；
