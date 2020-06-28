@@ -213,8 +213,32 @@ const vistorsMap = {
     if (testResult) return evaluate(consequent, scope);
     else return alternate ? evaluate(alternate, scope) : undefined;
   },
+  FunctionExpression: (node: ESTree.FunctionExpression, scope: Scope) => {
+    const { params, body } = node;
+    const newScope = new Scope('function', scope, true);
+    return function(...args) {
+      params.forEach((param, index) => {
+        newScope.const((<ESTree.Identifier>param).name, args[index]);
+      });
+      newScope.const('arguments', arguments);
+
+      newScope.const('this', this);
+
+      const result = evaluate(body, newScope);
+
+      if (result instanceof Signal) {
+        return result.value;
+      } else {
+        return result
+      }
+    }
+  },
   FunctionDeclaration: (node: ESTree.FunctionDeclaration, scope: Scope) => {
-    
+    const { name } = node.id;
+
+    const func = vistorsMap.FunctionExpression(<any>node, scope);
+
+    if (!scope.const(name, func)) throw `${TAG} function ${name} has defined`;
   }
 };
 

@@ -5,10 +5,6 @@ describe('tiny js interpreter', () => {
     execute('console.log(3 + 4)');
   });
 
-  test('test console', () => {
-    execute('console.log("test")');
-  });
-
   test('test assign', () => {
     execute(`
       var i = 1;
@@ -57,6 +53,19 @@ describe('tiny js interpreter', () => {
         console.log(checkVal);
       }
       func();
+    `);
+  });
+
+  test('test closure', () => {
+    execute(`
+      function func() {
+        var checkVal = 33;
+        function log() {
+          console.log(checkVal);
+        }
+        return log;
+      }
+      func()();
     `);
   });
 });

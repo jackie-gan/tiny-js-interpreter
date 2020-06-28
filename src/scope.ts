@@ -1,10 +1,6 @@
 import { ScopeType, KindType } from '../types/type';
 import { Var } from './var';
 
-const isolatedScope = {
-  'function': true
-};
-
 /**
  * 形成执行上下文的三种情况：全局作用域、函数作用域、eval
  * 
@@ -24,18 +20,21 @@ export class Scope {
   public var(rawName: string, value: any): boolean {
     let scope: Scope = this;
 
-    while (scope.parent !== null && !isolatedScope[scope.type]) {
+    while (scope.parent !== null && scope.type !== 'function') {
       scope = scope.parent;
     }
 
-    if (!this.content.hasOwnProperty(rawName)) {
-      this.content[rawName] = new Var('var', value);
+    if (!scope.content.hasOwnProperty(rawName)) {
+      scope.content[rawName] = new Var('var', value);
       return true;
     } else {
       return false;
     }
   }
 
+  /**
+   * 只在当前作用域定义
+   */
   public const(rawName: string, value: any): boolean {
     if (!this.content.hasOwnProperty(rawName)) {
       this.content[rawName] = new Var('const', value);
@@ -51,9 +50,9 @@ export class Scope {
    */
   public search(rawName: string): Var | null {
     // 1.先从当前作用域查找
-    // 2.如果没有，则继续往上查找
     if (this.content.hasOwnProperty(rawName)) {
       return this.content[rawName];
+    // 2.如果没有，则继续往上级查找
     } else if (this.parent) {
       return this.parent.search(rawName);
     } else {

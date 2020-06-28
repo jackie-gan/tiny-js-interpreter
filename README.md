@@ -18,3 +18,7 @@ A js interpreter
 ## Related
 
 感谢[jsjs](https://github.com/bramblex/jsjs)，受它的启发较多；
+
+## 还需要解决
+
+- [ ] 变量提升
