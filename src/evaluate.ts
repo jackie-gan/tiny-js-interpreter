@@ -27,6 +27,10 @@ const vistorsMap = {
       }
     }
   },
+  ThisExpression: (node: ESTree.ThisExpression, scope: Scope) => {
+    const thisVariable = scope.search('this');
+    return thisVariable ? thisVariable.getVal() : null;
+  },
   ObjectExpression: (node: ESTree.ObjectExpression, scope: Scope) => {
     const result = {};
 
