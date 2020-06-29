@@ -20,6 +20,7 @@ export class Scope {
   public var(rawName: string, value: any): boolean {
     let scope: Scope = this;
 
+    // function定义在函数作用域内
     while (scope.parent !== null && scope.type !== 'function') {
       scope = scope.parent;
     }
