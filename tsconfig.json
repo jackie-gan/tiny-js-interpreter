@@ -1,3 +1,14 @@
 {
-  
+  "compilerOptions": {
+    "allowJs": true,
+    "target": "ES5",
+    "lib": ["ES2015"],
+    "module": "CommonJS",
+    "noImplicitAny": false,
+    "removeComments": true,
+    "moduleResolution": "Node"
+  },
+  "include": [
+    "./src"
+  ]
 }

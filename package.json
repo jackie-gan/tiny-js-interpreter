@@ -5,7 +5,8 @@
   "main": "index.js",
   "typings": "types/index.d.ts",
   "scripts": {
-    "dev": "",
+    "dev": "rollup -c rollup.config.js --watch",
+    "build": "rollup -c rollup.config.js",
     "test": "jest"
   },
   "repository": {
@@ -20,11 +21,16 @@
   "homepage": "https://github.com/jackie-gan/tiny-js-interpreter#readme",
   "devDependencies": {
     "@babel/preset-env": "^7.10.3",
+    "@rollup/plugin-commonjs": "^13.0.0",
+    "@rollup/plugin-node-resolve": "^8.1.0",
+    "@rollup/plugin-typescript": "^5.0.1",
     "@types/estree": "0.0.45",
     "@types/jest": "^26.0.3",
     "babel-jest": "^26.1.0",
     "jest": "^26.1.0",
+    "rollup": "^2.18.1",
     "ts-jest": "^26.1.1",
+    "tslib": "^2.0.0",
     "typescript": "^3.9.5"
   }
 }
