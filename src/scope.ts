@@ -24,12 +24,14 @@ export class Scope {
       scope = scope.parent;
     }
 
-    if (!scope.content.hasOwnProperty(rawName)) {
+    if (scope.content.hasOwnProperty(rawName)) {
+      // 新的值替换旧的值
       scope.content[rawName] = new Var('var', value);
-      return true;
     } else {
-      return false;
+      // 新赋值
+      scope.content[rawName] = new Var('var', value);
     }
+    return true;
   }
 
   /**

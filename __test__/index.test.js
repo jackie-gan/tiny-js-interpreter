@@ -54,7 +54,7 @@ describe('tiny js interpreter', () => {
     `);
   });
 
-  test('test for for in', () => {
+  test('test for for-in', () => {
     execute(`
       var obj = { a: '1', b: '2' };
       var result = '';

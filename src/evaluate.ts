@@ -30,9 +30,33 @@ const vistorsMap = {
   ObjectExpression: (node: ESTree.ObjectExpression, scope: Scope) => {
     const result = {};
 
-    for (const property of node.properties) {
-      const kind = property.kind;
-    }
+    node.properties.forEach((property) => {
+      const { kind, key, value } = (<ESTree.Property>property);
+
+      let objKey;
+
+      if (key.type === 'Identifier') {
+        objKey = key.name;
+      } else if (key.type === 'Literal') {
+        objKey = key.value;
+      } else throw `${TAG} illegal object key`;
+
+      const objVal = evaluate(value, scope);
+
+      if (kind === 'init') {
+        result[objKey] = objVal;
+      } else if (kind === 'set') {
+        Object.defineProperty(result, objKey, {
+          set: objVal
+        });
+      } else if (kind === 'get') {
+        Object.defineProperty(result, objKey, {
+          get: objVal
+        });
+      } else throw `${TAG} unknow object expression kind`;
+    });
+
+    return result;
   },
   BinaryExpression: (node: ESTree.BinaryExpression, scope: Scope) => {
     const leftVal = evaluate(node.left, scope);
@@ -190,8 +214,9 @@ const vistorsMap = {
     const declar = (<ESTree.VariableDeclaration>left).declarations[0];
     const kind = (<ESTree.VariableDeclaration>left).kind;
     const name = (<ESTree.Identifier>declar.id).name;
+    const rightVal = evaluate(right, scope);
 
-    for (const value in evaluate(right, scope)) {
+    for (const value in rightVal) {
       scope.declare(kind, name, value);
 
       const result = evaluate(body, scope);
