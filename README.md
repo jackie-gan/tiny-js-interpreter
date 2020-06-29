@@ -22,3 +22,5 @@ A js interpreter
 ## 还需要解决
 
 - [ ] 变量提升
+- [ ] 完善try catch
+- [ ] 完善ArrayExpression
