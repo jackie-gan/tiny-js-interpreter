@@ -313,6 +313,9 @@ const vistorsMap = {
     const func = vistorsMap.FunctionExpression(<any>node, scope);
 
     if (!scope.const(name, func)) throw `${TAG} function ${name} has defined`;
+  },
+  ThrowStatement: (node: ESTree.ThrowStatement, scope: Scope) => {
+    throw evaluate(node.argument, scope);
   }
 };
 
