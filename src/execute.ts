@@ -1,6 +1,8 @@
 const acorn = require('acorn');
+import * as ESTree from 'estree';
 import { evaluate } from './evaluate';
-import { Scope } from './scope'; 
+import { Scope } from './scope';
+import { AstPath } from '../types/type';
 import { defaultApis } from './utils';
 
 export function execute(code: string, externalApis: any = {}) {
@@ -15,7 +17,15 @@ export function execute(code: string, externalApis: any = {}) {
     scope.const(name, externalApis[name]);
   }
 
-  return evaluate(acorn.parse(code, {
+  const rootNode = acorn.parse(code, {
     sourceType: 'script'
-  }), scope);
+  });
+
+  const astPath: AstPath<ESTree.Node> = {
+    node: rootNode,
+    evaluate,
+    scope
+  }
+
+  return evaluate(astPath);
 }
