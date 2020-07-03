@@ -17,6 +17,12 @@ export function execute(code: string, externalApis: any = {}) {
     scope.const(name, externalApis[name]);
   }
 
+  // 模块导出
+  const $exports = {};
+  const $module = { exports: $exports };
+  scope.const('module', $module);
+  scope.var('exports', $exports);
+
   const rootNode = acorn.parse(code, {
     sourceType: 'script'
   });
@@ -27,5 +33,10 @@ export function execute(code: string, externalApis: any = {}) {
     scope
   }
 
-  return evaluate(astPath);
+  evaluate(astPath);
+
+  // 导出结果
+  const moduleExport = scope.search('module');
+
+  return moduleExport ? moduleExport.getVal().exports : null;
 }

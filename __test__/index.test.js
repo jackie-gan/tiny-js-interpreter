@@ -6,97 +6,110 @@ describe('tiny js interpreter', () => {
   });
 
   test('test assign', () => {
-    execute(`
+    expect(execute(`
       var i = 1;
       i = 2;
-      console.log(i);
-    `);
+      module.exports = i;
+    `)).toBe(2);
   });
 
   test('test for loop', () => {
-    execute(`
+    expect(execute(`
       var result = 0;
       for (var i = 0; i < 3; i++) {
         result += 2;
       }
-      console.log(result);
-    `);
+      module.exports = result;
+    `)).toBe(6);
   });
 
   test('test for loop break', () => {
-    execute(`
+    expect(execute(`
       var result = 0;
       for (var i = 0; i < 3; i++) {
         result += 2;
         if (result >= 4) break;
       }
-      console.log(result);
-    `);
+      module.exports = result;
+    `)).toBe(4);
   });
 
   test('test for while', () => {
-    execute(`
+    expect(execute(`
       var i = 0;
       while(i < 11) {
         i++;
       }
-      console.log('test for while', i);
-    `);
+      module.exports = i;
+    `)).toBe(11);
   });
 
   test('test for do while', () => {
-    execute(`
+    expect(execute(`
       var i = 0;
       do {
         i++;
       } while(i < 11)
-      console.log('test for do while', i);
-    `);
+      module.exports = i;
+    `)).toBe(11);
   });
 
   test('test for for-in', () => {
-    execute(`
+    expect(execute(`
       var obj = { a: '1', b: '2' };
       var result = '';
       for (var key in obj) {
         result += key;
       }
-      console.log(result);
-    `);
+      module.exports = result;
+    `)).toBe('ab');
   });
 
   test('test for update expression', () => {
-    execute(`
+    expect(execute(`
       var i = 1, j = 1;
-      console.log('++', ++i);
-      console.log('++', j++);
+      ++i;
+      j++;
       var m = 2, n = 2;
-      console.log('--', --m);
-      console.log('--', n--);
-    `);
+      --m;
+      n--;
+      module.exports = { i, j, m, n };
+    `)).toMatchObject({ i: 2, j: 2, m: 1, n: 1 });
   });
 
   test('test for function 1', () => {
-    execute(`
+    expect(execute(`
       var checkVal = 11;
+      var result;
       function func() {
         var checkVal = 22;
-        console.log(checkVal);
+        result = checkVal;
       }
       func();
-    `);
+      module.exports = result;
+    `)).toBe(22);
   });
 
   test('test closure', () => {
-    execute(`
+    expect(execute(`
+      var result;
       function func() {
         var checkVal = 33;
         function log() {
-          console.log(checkVal);
+          result = checkVal;
         }
         return log;
       }
       func()();
-    `);
+      module.exports = result;
+    `)).toBe(33);
   });
+
+  test('test throw', () => {
+    expect(() => {
+      execute(`
+        throw 'this is error';
+      `)
+    }).toThrowError('this is error');
+  })
 });
