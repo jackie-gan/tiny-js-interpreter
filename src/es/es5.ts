@@ -380,6 +380,35 @@ export const es5 = {
       '&&': (l, r) => l && r 
     }[operator](leftVal, rightVal);
   },
+  UnaryExpression: (astPath: AstPath<ESTree.UnaryExpression>) => {
+    const { node, scope, evaluate } = astPath;
+    // UnaryExpression中的prefix 总是 true
+    const { operator, argument } = node
+
+    return {
+      'typeof': () => {
+        if (argument.type === 'Identifier') {
+          const variable = scope.search(argument.name);
+          return variable ? typeof variable.getVal() : 'undefined';
+        } else {
+          return evaluate({ node: argument, scope, evaluate });
+        }
+      },
+      'void': () => void evaluate({ node: argument, scope, evaluate }),
+      'delete': () => {
+        if (node.argument.type === 'MemberExpression') {
+          const { object, computed, property } = node.argument;
+          const obj = evaluate({ node: object, scope, evaluate });
+          const key = computed ? evaluate({ node: property, scope, evaluate }) : (<ESTree.Identifier>property).name;
+          return delete obj[key];
+        }
+      },
+      '!': () => !evaluate({ node: argument, scope, evaluate }),
+      '~': () => ~evaluate({ node: argument, scope, evaluate }),
+      '+': () => +evaluate({ node: argument, scope, evaluate }),
+      '-': () => -evaluate({ node: argument, scope, evaluate })
+    }[operator]();
+  },
   DebuggerStatement: (astPath: AstPath<ESTree.DebuggerStatement>) => {
     debugger;
   }
