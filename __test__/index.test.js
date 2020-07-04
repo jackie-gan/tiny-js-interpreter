@@ -111,5 +111,29 @@ describe('tiny js interpreter', () => {
         throw 'this is error';
       `)
     }).toThrowError('this is error');
-  })
+  });
+
+  test('test try catch 1', () => {
+    expect(execute(`
+      var result;
+      try {
+        throw 'this is catch';
+      } catch(e) {
+        result = e;
+      }
+      module.exports = result;
+    `)).toBe('this is catch');
+  });
+
+  test('test try catch 2', () => {
+    expect(execute(`
+      var result;
+      try {
+        1 + 2;
+      } finally {
+        result = 'this is finally';
+      }
+      module.exports = result;
+    `)).toBe('this is finally');
+  });
 });

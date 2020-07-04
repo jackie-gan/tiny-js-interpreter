@@ -344,9 +344,19 @@ export const es5 = {
     // TODO 缺少catch或finally的时候，抛错
     const { node, scope, evaluate } = astPath;
     try {
-      evaluate({ node: node.block, scope, evaluate });
+      return evaluate({ node: node.block, scope, evaluate });
     } catch (e) {
-      
+      if (node.handler) {
+        const { param, body } = node.handler;
+        const newScope = new Scope('block', scope);
+        scope.const((<ESTree.Identifier>param).name, e);
+        return evaluate({ node: body, scope: newScope, evaluate });
+      } else {
+        // 没有写catch，则继续抛错
+        throw e;
+      }
+    } finally {
+      if (node.finalizer) return evaluate({ node: node.finalizer, scope, evaluate });
     }
   }
 };
