@@ -136,4 +136,10 @@ describe('tiny js interpreter', () => {
       module.exports = result;
     `)).toBe('this is finally');
   });
+
+  test('test conditional expression', () => {
+    expect(execute(`
+      module.exports = 2 > 1 ? 2 : 1;
+    `)).toBe(2);
+  });
 });

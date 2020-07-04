@@ -358,5 +358,11 @@ export const es5 = {
     } finally {
       if (node.finalizer) return evaluate({ node: node.finalizer, scope, evaluate });
     }
+  },
+  ConditionalExpression: (astPath: AstPath<ESTree.ConditionalExpression>) => {
+    const { node, scope, evaluate } = astPath;
+    const { test, consequent, alternate } = node;
+    return evaluate({ node: test, scope, evaluate }) ? 
+      evaluate({ node: consequent, scope, evaluate }) : evaluate({ node: alternate, scope, evaluate });
   }
 };
