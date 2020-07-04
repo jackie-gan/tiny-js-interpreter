@@ -367,5 +367,8 @@ export const es5 = {
     const { test, consequent, alternate } = node;
     return evaluate({ node: test, scope, evaluate }) ? 
       evaluate({ node: consequent, scope, evaluate }) : evaluate({ node: alternate, scope, evaluate });
+  },
+  DebuggerStatement: (astPath: AstPath<ESTree.DebuggerStatement>) => {
+    debugger;
   }
 };
