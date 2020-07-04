@@ -368,6 +368,18 @@ export const es5 = {
     return evaluate({ node: test, scope, evaluate }) ? 
       evaluate({ node: consequent, scope, evaluate }) : evaluate({ node: alternate, scope, evaluate });
   },
+  LogicalExpression: (astPath: AstPath<ESTree.LogicalExpression>) => {
+    const { node, scope, evaluate } = astPath;
+    const { left, operator, right } = node;
+
+    const leftVal = evaluate({ node: left, scope, evaluate });
+    const rightVal = evaluate({ node: right, scope, evaluate });
+
+    return {
+      '||': (l, r) => l || r,
+      '&&': (l, r) => l && r 
+    }[operator](leftVal, rightVal);
+  },
   DebuggerStatement: (astPath: AstPath<ESTree.DebuggerStatement>) => {
     debugger;
   }

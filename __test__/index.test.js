@@ -148,4 +148,10 @@ describe('tiny js interpreter', () => {
       module.exports = 2 > 1 ? 2 : 1;
     `)).toBe(2);
   });
+
+  test('test logical expression', () => {
+    expect(execute(`
+      module.export = true || false;
+    `)).toBeTruthy();
+  });
 });
