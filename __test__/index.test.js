@@ -13,6 +13,12 @@ describe('tiny js interpreter', () => {
     `)).toBe(2);
   });
 
+  test('test regex', () => {
+    expect(execute(`
+      module.exports = /abc/.test('abc');
+    `)).toBeTruthy();
+  });
+
   test('test for loop', () => {
     expect(execute(`
       var result = 0;

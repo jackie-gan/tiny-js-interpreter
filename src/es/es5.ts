@@ -94,7 +94,10 @@ export const es5 = {
   },
   Literal: (astPath: AstPath<ESTree.Literal>) => {
     const { node } = astPath;
-    return node.value;
+    if ((<ESTree.RegExpLiteral>node).regex) {
+      const { pattern, flags } = (<ESTree.RegExpLiteral>node).regex;
+      return new RegExp(pattern, flags);
+    } else return node.value;
   },
   Identifier: (astPath: AstPath<ESTree.Identifier>) => {
     const { node, scope } = astPath;
