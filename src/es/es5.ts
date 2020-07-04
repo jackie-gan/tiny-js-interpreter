@@ -339,5 +339,14 @@ export const es5 = {
   ThrowStatement: (astPath: AstPath<ESTree.ThrowStatement>) => {
     const { node, scope, evaluate } = astPath;
     throw evaluate({ node: node.argument, scope, evaluate });
+  },
+  TryStatement: (astPath: AstPath<ESTree.TryStatement>) => {
+    // TODO 缺少catch或finally的时候，抛错
+    const { node, scope, evaluate } = astPath;
+    try {
+      evaluate({ node: node.block, scope, evaluate });
+    } catch (e) {
+      
+    }
   }
 };
