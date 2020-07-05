@@ -6,7 +6,7 @@ import { Var } from './var';
  * 
  * 在执行上下文中，会产生作用域链
  * 
- * 这里的Scope是只要为 {} ， 就会创建一个Scope，当invasive为true时，表示当 子表达式中，有BlockStatement，就不需要再多构造Scope了
+ * 这里的Scope是只要为 {} ， 就会创建一个Scope
  * 
  * 定义了变量定义和查找的规则
  */
@@ -15,10 +15,9 @@ export class Scope {
   private content: { [key: string]: Var };
   public invasive: boolean;
 
-  constructor(public readonly type: ScopeType, parent?: Scope, invasive?: boolean) {
+  constructor(public readonly type: ScopeType, parent?: Scope) {
     this.parent = parent || null;
     this.content = {};  // 当前作用域的变量
-    this.invasive = invasive;
   }
 
   /**

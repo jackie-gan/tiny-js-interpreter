@@ -6,6 +6,6 @@ export type AstPath<T> = {
   scope: Scope
 } 
 
-export type ScopeType = 'root' | 'function' | 'block' | 'for' | 'for-in' | 'switch' | 'if';
+export type ScopeType = 'root' | 'function' | 'block';
 
 export type KindType = "var" | "const" | "let";

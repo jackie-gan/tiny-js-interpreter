@@ -17,7 +17,7 @@ export const es5 = {
   },
   BlockStatement: (astPath: AstPath<ESTree.BlockStatement>) => {
     const { node, scope, evaluate } = astPath;
-    const blockScope = scope.invasive ? scope : new Scope('block', scope);
+    const blockScope = new Scope('block', scope);
 
     const { body } = node;
     const len = body.length;
@@ -108,8 +108,14 @@ export const es5 = {
   },
   VariableDeclaration: (astPath: AstPath<ESTree.VariableDeclaration>) => {
     const { node, scope, evaluate } = astPath;
-    node.declarations.forEach((declar) => {
-      evaluate({ node: declar, scope, evaluate });
+    const { declarations, kind } = node;
+    declarations.forEach((declar) => {
+      const { id, init } = (<ESTree.VariableDeclarator>declar);
+      const key = (<ESTree.Identifier>id).name;
+      const value = init ? evaluate({ node: init, scope, evaluate }) : undefined;
+      if (!scope.declare(kind, key, value)) {
+        throw `${TAG} ${key} has defined`;
+      }
     });
   },
   VariableDeclarator: (astPath: AstPath<ESTree.VariableDeclarator>) => {
@@ -196,7 +202,7 @@ export const es5 = {
   ForStatement: (astPath: AstPath<ESTree.ForStatement>) => {
     const { node, scope, evaluate } = astPath;
     const { init, test, update, body } = node;
-    const forScope = new Scope('for', scope);
+    const forScope = new Scope('block', scope);
 
     for (
       init ? evaluate({ node: init, scope: forScope, evaluate }) : undefined;
@@ -314,7 +320,7 @@ export const es5 = {
   FunctionExpression: (astPath: AstPath<ESTree.FunctionExpression>) => {
     const { node, scope, evaluate } = astPath;
     const { params, body } = node;
-    const newScope = new Scope('function', scope, true);
+    const newScope = new Scope('function', scope);
     return function(...args) {
       params.forEach((param, index) => {
         newScope.const((<ESTree.Identifier>param).name, args[index]);
@@ -412,5 +418,8 @@ export const es5 = {
   },
   DebuggerStatement: (astPath: AstPath<ESTree.DebuggerStatement>) => {
     debugger;
+  },
+  EmptyStatement: () => {
+    // 啥都不做
   }
 };
