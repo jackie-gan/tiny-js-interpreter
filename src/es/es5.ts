@@ -22,7 +22,7 @@ export const es5 = {
     const { body } = node;
     const len = body.length;
 
-    for (let i = 0; i < len; i++ ) {
+    for (let i = 0; i < len; i++) {
       const result = evaluate({ node: body[i], scope: blockScope, evaluate });
 
       if (Signal.isBreak(result) || Signal.isContinue(result) || Signal.isReturn(result)) {
@@ -150,6 +150,7 @@ export const es5 = {
     }
   },
   WithStatement: () => {
+    // with 就不实现了
     throw `${TAG} WithStatement is not implement`;
   },
   AssignmentExpression: (astPath: AstPath<ESTree.AssignmentExpression>) => {
@@ -195,13 +196,13 @@ export const es5 = {
   ForStatement: (astPath: AstPath<ESTree.ForStatement>) => {
     const { node, scope, evaluate } = astPath;
     const { init, test, update, body } = node;
-    const loopScope = new Scope('loop', scope);
+    const forScope = new Scope('for', scope);
 
     for (
-      init ? evaluate({ node: init, scope: loopScope, evaluate }) : undefined;
-      test ? evaluate({ node: test, scope: loopScope, evaluate }) : true;
-      update ? evaluate({ node: update, scope: loopScope, evaluate }) : undefined) {
-      const result = evaluate({ node: body, scope: loopScope, evaluate });
+      init ? evaluate({ node: init, scope: forScope, evaluate }) : undefined;
+      test ? evaluate({ node: test, scope: forScope, evaluate }) : true;
+      update ? evaluate({ node: update, scope: forScope, evaluate }) : undefined) {
+      const result = evaluate({ node: body, scope: forScope, evaluate });
       if (Signal.isBreak(result)) break;
       else if (Signal.isContinue(result)) continue;
       else if (Signal.isReturn(result)) return result.result;

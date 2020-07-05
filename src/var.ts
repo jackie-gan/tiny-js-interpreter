@@ -6,6 +6,9 @@ interface IVar {
   setVal(value: any): boolean
 }
 
+/**
+ * 定义变量记录
+ */
 export class Var implements IVar {
   constructor(public kind: KindType, private value: any) {}
 
@@ -14,6 +17,7 @@ export class Var implements IVar {
   }
 
   public setVal(value: any): boolean {
+    // 类型为 const，不设置值
     if (this.kind === 'const') {
       return false;
     } else {

@@ -1,6 +1,6 @@
 import { execute } from '../src/execute';
 
-describe('tiny js interpreter', () => {
+describe('tiny js interpreter es5', () => {
   test('binay expression', () => {
     execute('console.log(3 + 4)');
   });
