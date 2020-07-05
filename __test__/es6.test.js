@@ -17,6 +17,18 @@ describe('tiny js interpreter es6', () => {
   });
     
   test('test arrow function', () => {
-    
+    expect(execute(`
+      var result;
+      function ff() {
+        this.a = 6;
+        const fff = () => {
+          this.a = 7;
+        };
+        fff();
+      };
+      const obj = { a: 5, func: ff };
+      obj.func();
+      module.exports = obj.a;
+    `)).toBe(7);
   });
 });
