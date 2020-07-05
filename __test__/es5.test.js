@@ -2,7 +2,9 @@ import { execute } from '../src/execute';
 
 describe('tiny js interpreter es5', () => {
   test('binay expression', () => {
-    execute('console.log(3 + 4)');
+    expect(execute(`
+      module.exports = 3 + 4;
+    `)).toBe(7);
   });
 
   test('test assign', () => {
