@@ -334,7 +334,7 @@ export const es5 = {
       if (result instanceof Signal) {
         return result.value;
       } else {
-        return result
+        return result;
       }
     }
   },
