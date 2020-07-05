@@ -31,13 +31,7 @@ export class Scope {
       scope = scope.parent;
     }
 
-    if (scope.content.hasOwnProperty(rawName)) {
-      // 新的值替换旧的值
-      scope.content[rawName] = new Var('var', value);
-    } else {
-      // 新赋值
-      scope.content[rawName] = new Var('var', value);
-    }
+    scope.content[rawName] = new Var('var', value);
     return true;
   }
 
