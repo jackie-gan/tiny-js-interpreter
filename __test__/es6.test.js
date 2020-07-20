@@ -31,4 +31,15 @@ describe('tiny js interpreter es6', () => {
       module.exports = obj.a;
     `)).toBe(7);
   });
+
+  test('test spread', () => {
+    expect(execute(`
+      var obj = { a: 1 };
+      module.exports = { a: 2, ...obj };
+    `)).toMatchObject({ a: 1 });
+  });
+
+  test('test template literal', () => {
+    expect(execute("var val1 = 'val1'; var val2 = 'val2'; module.exports = `${val1} + ${val2}`")).toBe('val1 + val2');
+  });
 });

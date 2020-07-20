@@ -37,32 +37,36 @@ export const es5 = {
   },
   ObjectExpression: (astPath: AstPath<ESTree.ObjectExpression>) => {
     const { node, scope, evaluate } = astPath;
-    const result = {};
+    let result = {};
 
     node.properties.forEach((property) => {
-      const { kind, key, value } = (<ESTree.Property>property);
+      if (property.type === 'Property') {
+        const { kind, key, value } = property;
 
-      let objKey;
-
-      if (key.type === 'Identifier') {
-        objKey = key.name;
-      } else if (key.type === 'Literal') {
-        objKey = key.value;
-      } else throw `${TAG} illegal object key`;
-
-      const objVal = evaluate({ node: value, scope, evaluate });
-
-      if (kind === 'init') {
-        result[objKey] = objVal;
-      } else if (kind === 'set') {
-        Object.defineProperty(result, objKey, {
-          set: objVal
-        });
-      } else if (kind === 'get') {
-        Object.defineProperty(result, objKey, {
-          get: objVal
-        });
-      } else throw `${TAG} unknow object expression kind`;
+        let objKey;
+  
+        if (key.type === 'Identifier') {
+          objKey = key.name;
+        } else if (key.type === 'Literal') {
+          objKey = key.value;
+        } else throw `${TAG} illegal object key`;
+  
+        const objVal = evaluate({ node: value, scope, evaluate });
+  
+        if (kind === 'init') {
+          result[objKey] = objVal;
+        } else if (kind === 'set') {
+          Object.defineProperty(result, objKey, {
+            set: objVal
+          });
+        } else if (kind === 'get') {
+          Object.defineProperty(result, objKey, {
+            get: objVal
+          });
+        } else throw `${TAG} unknow object expression kind`;
+      } else if (property.type === 'SpreadElement') {
+        result = evaluate({ node: property, scope, evaluate });
+      }
     });
 
     return result;
