@@ -71,6 +71,16 @@ export const es5 = {
 
     return result;
   },
+  ArrayExpression: (astPath: AstPath<ESTree.ArrayExpression>) => {
+    const { node, scope, evaluate } = astPath;
+    const result = [];
+
+    node.elements.forEach((element) => {
+      result.push(evaluate({ node: element, scope, evaluate }));
+    });
+
+    return result;
+  },
   BinaryExpression: (astPath: AstPath<ESTree.BinaryExpression>) => {
     const { node, scope, evaluate } = astPath;
     const leftVal = evaluate({ node: node.left, scope, evaluate });

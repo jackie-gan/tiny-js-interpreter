@@ -156,4 +156,13 @@ describe('tiny js interpreter es5', () => {
       module.export = true || false;
     `)).toBeTruthy();
   });
+
+  test('test object expression', () => {
+    expect(execute(`
+      function func() {
+        return 2;
+      }
+      module.exports = [1, func(), 3];
+    `)).toMatchObject([1, 2, 3]);
+  });
 });
