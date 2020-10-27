@@ -6,6 +6,7 @@ import { AstPath } from '../types/type';
 import { defaultApis } from './utils';
 
 export function execute(code: string, externalApis: any = {}) {
+  // 根作用域
   const scope = new Scope('root');
   scope.const('this', null);
 
@@ -17,12 +18,13 @@ export function execute(code: string, externalApis: any = {}) {
     scope.const(name, externalApis[name]);
   }
 
-  // 模块导出
+  // 模块导出，使用commonjs
   const $exports = {};
   const $module = { exports: $exports };
   scope.const('module', $module);
   scope.var('exports', $exports);
 
+  // 使用acorn解析AST语法树
   const rootNode = acorn.parse(code, {
     sourceType: 'script'
   });

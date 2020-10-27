@@ -2,17 +2,11 @@ import { ScopeType, KindType } from '../types/type';
 import { Var } from './var';
 
 /**
- * 形成执行上下文的三种情况：全局作用域、函数作用域、eval
- * 
- * 在执行上下文中，会产生作用域链
- * 
- * 这里的Scope是只要为 {} ， 就会创建一个Scope
- * 
- * 定义了变量定义和查找的规则
+ * 处理全局作用域、函数作用域，定义了变量定义和查找的规则
  */
 export class Scope {
-  private parent: Scope | null;
-  private content: { [key: string]: Var };
+  private parent: Scope | null;   // 指向上一级作用域的指针
+  private content: { [key: string]: Var };    // 当前作用域的变量
   public invasive: boolean;
 
   constructor(public readonly type: ScopeType, parent?: Scope) {
@@ -36,7 +30,7 @@ export class Scope {
   }
 
   /**
-   * 只在当前作用域定义
+   * const只在当前作用域定义
    */
   public const(rawName: string, value: any): boolean {
     if (!this.content.hasOwnProperty(rawName)) {
@@ -49,7 +43,7 @@ export class Scope {
   }
 
   /**
-   * 
+   * let只在当前作用域定义
    */
   public let(rawName: string, value: any): boolean {
     if (!this.content.hasOwnProperty(rawName)) {

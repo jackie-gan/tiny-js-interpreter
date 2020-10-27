@@ -5,7 +5,7 @@ A js interpreter
 
 ## Support
 
-目前只支持es5
+目前只支持es5和部分es6语法
 
 ## AST语法树生成
 

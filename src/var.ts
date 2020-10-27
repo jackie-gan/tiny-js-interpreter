@@ -7,7 +7,7 @@ interface IVar {
 }
 
 /**
- * 定义变量记录
+ * 定义变量记录，方便做读写控制
  */
 export class Var implements IVar {
   constructor(public kind: KindType, private value: any) {}
