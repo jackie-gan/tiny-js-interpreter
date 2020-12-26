@@ -171,7 +171,10 @@ describe('tiny js interpreter es5', () => {
       const options = { a: 1, b: 2 };
       const { a: ret1, b: ret2 } = options;
       const { ret3 } = { ret3: 3 };
-      module.exports = { val1: ret1, val2: ret2, val3: ret3 };
-    `)).toMatchObject({ val1: 1, val2: 2, val3: 3 });
+      const arr = [];
+      arr.ret4 = 4;
+      const [ ret4 ] = arr;
+      module.exports = { val1: ret1, val2: ret2, val3: ret3, val4: ret4 };
+    `)).toMatchObject({ val1: 1, val2: 2, val3: 3, val4: 4 });
   });
 });

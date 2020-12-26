@@ -150,6 +150,19 @@ export const es5 = {
           }
           break;
         }
+        case 'ArrayPattern': {
+          const arr = evaluate({ node: init, scope, evaluate });
+
+          for (const element of id.elements) {
+            if (element.type === 'Identifier') {
+              const name = element.name;
+              if (!scope.declare(kind, name, arr[name])) {
+                throw `${TAG} ${name} has defined`;
+              }
+            }
+          }
+          break;
+        }
         default:
           throw 'unknown VariableDeclaration'
       }
