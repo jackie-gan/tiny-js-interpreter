@@ -125,10 +125,33 @@ export const es5 = {
     const { declarations, kind } = node;
     declarations.forEach((declar) => {
       const { id, init } = (<ESTree.VariableDeclarator>declar);
-      const key = (<ESTree.Identifier>id).name;
-      const value = init ? evaluate({ node: init, scope, evaluate }) : undefined;
-      if (!scope.declare(kind, key, value)) {
-        throw `${TAG} ${key} has defined`;
+      switch (id.type) {
+        // example: const a = 2;
+        case 'Identifier': {
+          const key = (<ESTree.Identifier>id).name;
+          const value = init ? evaluate({ node: init, scope, evaluate }) : undefined;
+          if (!scope.declare(kind, key, value)) {
+            throw `${TAG} ${key} has defined`;
+          }
+          break;
+        }
+        // example: const { name, weight } = people;
+        case 'ObjectPattern': {
+          const obj = evaluate({ node: init, scope, evaluate });
+
+          for (const property of id.properties) {
+            if (property.type === 'Property') {
+              const value = <ESTree.Identifier>property.value;
+              const key = <ESTree.Identifier>property.key;
+              if (!scope.declare(kind, value.name, obj[key.name])) {
+                throw `${TAG} ${value.name} has defined`;
+              }
+            }
+          }
+          break;
+        }
+        default:
+          throw 'unknown VariableDeclaration'
       }
     });
   },
