@@ -10,71 +10,71 @@ export class Scope {
   public invasive: boolean;
 
   constructor(public readonly type: ScopeType, parent?: Scope) {
-    this.parent = parent || null;
-    this.content = {};  // 当前作用域的变量
+      this.parent = parent || null;
+      this.content = {};  // 当前作用域的变量
   }
 
   /**
    * 存储到上一级的作用域中 
    */
-  public var(rawName: string, value: any): boolean {
-    let scope: Scope = this;
+  public var(rawName: string, value: unknown): boolean {
+      let scope: Scope = this;
 
-    // function定义在函数作用域内
-    while (scope.parent !== null && scope.type !== 'function') {
-      scope = scope.parent;
-    }
+      // function定义在函数作用域内
+      while (scope.parent !== null && scope.type !== 'function') {
+          scope = scope.parent;
+      }
 
-    scope.content[rawName] = new Var('var', value);
-    return true;
+      scope.content[rawName] = new Var('var', value);
+      return true;
   }
 
   /**
    * const只在当前作用域定义
    */
-  public const(rawName: string, value: any): boolean {
-    if (!this.content.hasOwnProperty(rawName)) {
-      this.content[rawName] = new Var('const', value);
-      return true;
-    } else {
+  public const(rawName: string, value: unknown): boolean {
+      if (!Object.prototype.hasOwnProperty.call(this.content, rawName)) {
+          this.content[rawName] = new Var('const', value);
+          return true;
+      } else {
       // 已经定义了
-      return false;
-    }
+          return false;
+      }
   }
 
   /**
    * let只在当前作用域定义
    */
-  public let(rawName: string, value: any): boolean {
-    if (!this.content.hasOwnProperty(rawName)) {
-      this.content[rawName] = new Var('let', value);
-      return true;
-    } else {
+  public let(rawName: string, value: unknown): boolean {
+      if (!Object.prototype.hasOwnProperty.call(this.content, rawName)) {
+          this.content[rawName] = new Var('let', value);
+          return true;
+      } else {
       // 已经定义了
-      return false;
-    }
+          return false;
+      }
   }
 
   /**
    * 从作用域上查找变量
    */
   public search(rawName: string): Var | null {
-    // 1.先从当前作用域查找
-    if (this.content.hasOwnProperty(rawName)) {
-      return this.content[rawName];
-    // 2.如果没有，则继续往上级查找
-    } else if (this.parent) {
-      return this.parent.search(rawName);
-    } else {
-      return null;
-    }
+      // 1.先从当前作用域查找
+      if (Object.prototype.hasOwnProperty.call(this.content, rawName)) {
+          return this.content[rawName];
+          // 2.如果没有，则继续往上级查找
+      } else if (this.parent) {
+          return this.parent.search(rawName);
+      } else {
+          return null;
+      }
   }
 
-  public declare(kind: KindType, rawName: string, value: any): boolean {
-    return ({
-      'var': () => this.var(rawName, value),
-      'const': () => this.const(rawName, value),
-      'let': () => this.let(rawName, value)
-    })[kind]();
+  public declare(kind: KindType, rawName: string, value: unknown): boolean {
+      return ({
+          'var': () => this.var(rawName, value),
+          'const': () => this.const(rawName, value),
+          'let': () => this.let(rawName, value)
+      })[kind]();
   }
 }
